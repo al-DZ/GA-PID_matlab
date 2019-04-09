@@ -2,21 +2,19 @@
 clc;
 clear;
 close all;
-
-%%参数设置
+%% 参数设置
 ChromosomeSize = 3;                                 %染色体长度，参数的个数，PID有三个参数
 PopulationSize = 100;                               %种群规模
 MaxIter = 100;                                      %最大迭代次数
-% MinFitness=0.01;                                    %最小适应值   这里PID适应度函数取的倒数，因此应为最大。
+MinFitness=0.01;                                    %最小适应值
 % CrossRate=0.6;                                      %交叉概率
 MutateRate=0.2;                                     %变异概率
-NoChangeNo=5;                                       %直接复制的父辈的染色体数量       
-UpLimit=30;                                              %基因上限
-%% 全局变量 pid的三个参数
+ObjFun=@PSO_PID;                                    %适应值函数
+NoChangeNo=5;                                              
+UpLimit=30;                                              %上限
 global Kp;
 global Ki;
 global Kd;
-
 %% 初始化种群init.m
 Population=rand(PopulationSize,ChromosomeSize);    %种群,预分配内存
 for i=1:PopulationSize
@@ -36,18 +34,18 @@ AveFitness=zeros(MaxIter,1);
 Elite=zeros(MaxIter,ChromosomeSize);                  %用于记录每一代的最优解
 
 for Iter=1:MaxIter
-    disp(['迭代次数：',num2str(Iter)]);
-    % 适应值计算Fitness
+    disp(['迭代次数：',num2str(Iter)]);         %显示迭代进度
+    %% 适应值计算Fitness
     for i=1:PopulationSize
         Kp=Population(i,1);
         Ki=Population(i,2);
         Kd=Population(i,3);
-        PopulationFitness(i,:) = fitness(Kp,Ki,Kd);
+        PopulationFitness(i,1) = fitness(Kp,Ki,Kd);
     end
 
-    % 适应值大小排序，并保存最佳
+    %% 适应值大小排序，并保存最佳个体和最佳适应度
     FitnessSum=sum(PopulationFitness);                 %种群累加适应度
-    AveFitness(Iter,1)=FitnessSum/PopulationSize;
+    AveFitness(Iter,1)=FitnessSum/PopulationSize;           %种群平均适应度
     [PopulationFitness,Index]=sort(PopulationFitness);         %适应值从小到大排序
     BestFitness(Iter,1) = PopulationFitness(MaxIter,1);                %最佳适应度
     Elite(Iter,:) = Population(Index(MaxIter),:);                    %记录本代的精英
@@ -73,7 +71,7 @@ for Iter=1:MaxIter
         r1=rand*FitnessSum;
         for k=1:PopulationSize
             m1=m1+PopulationFitness(k);
-            if r1<m1
+            if r1<=m1
                 idx1=Index(k);
                 break;
             end
@@ -83,7 +81,7 @@ for Iter=1:MaxIter
         r2=rand*FitnessSum;
         for k=1:PopulationSize
             m2=m2+PopulationFitness(k);
-            if r2<m2
+            if r2<=m2
                 idx2=Index(k);
                 break;
             end
@@ -131,6 +129,33 @@ for Iter=1:MaxIter
     clear last;
     clear idx;
     clear mid;
+%     clear PopulationNew;
+    
+    %交叉操作  crossover
+%     for i=1:PopulationSize
+%         % rand<交叉概率，对两个个体的染色体串进行交叉操作
+%         if(rand < CrossRate)
+%             acr_position = floor(ChromosomeSize*rand+1);                %要交叉的节点
+% %             if (cross_position == 0 || cross_position == 1)
+% %                 continue;
+% %             end
+%             acr_chrom = floor((PopulationSize-1)*rand+1);                 %要交叉的染色体，floor取比它小的整数,acr_chrom取值在1-N    
+%             for j=1:acr_position
+%                 temp = Population(i,j);
+%                 Population(i,j) = Population(acr_chrom,j);
+%                 Population(acr_chrom,j) = temp;
+%             end
+%             
+%         end
+%     end
+%     clear i;
+% %     clear j;
+%     clear temp;
+%     clear acr_chrom;
+    
+    
+    
+    
     clear i;
     clear j;
     
@@ -138,6 +163,7 @@ for Iter=1:MaxIter
     K_i(1,Iter)=Elite(Iter,2);
     K_d(1,Iter)=Elite(Iter,3);
 end
+
 figure(1)
 plot(BestFitness,'LineWidth',2);
 
@@ -146,3 +172,9 @@ plot(K_p)
 hold on
 plot(K_i,'k','LineWidth',3)
 plot(K_d,'--r')
+
+
+
+
+
+
