@@ -1,0 +1,7 @@
+function z=fitness(Kp,Ki,Kd)
+
+assignin('base','Kp',Kp);
+assignin('base','Ki',Ki);
+assignin('base','Kd',Kd);
+[~,~,y_out]=sim('thetapid',[0,50]);
+z=1/(y_out(end,1));   %%表示 取这个 矩阵的第一列最后一行的数据。
