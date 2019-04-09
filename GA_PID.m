@@ -42,7 +42,7 @@ for Iter=1:MaxIter
         Kp=Population(i,1);
         Ki=Population(i,2);
         Kd=Population(i,3);
-        PopulationFitness(i,:) = PSO_PID(Kp,Ki,Kd);
+        PopulationFitness(i,:) = fitness(Kp,Ki,Kd);
     end
 
     % 适应值大小排序，并保存最佳
