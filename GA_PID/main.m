@@ -5,8 +5,8 @@ close all;
 %% 参数设置
 ChromosomeSize = 1;                                 %染色体个数
 ChromosomeLen=17;                                   %染色体长度   由最大值决定  
-PopulationSize = 200;                               %种群规模
-MaxIter = 200;                                      %最大迭代次数
+PopulationSize = 100;                               %种群规模
+MaxIter = 50;                                      %最大迭代次数
 % MinFitness=0.01;                                    %最小适应值
 CrossRate=0.6;                                      %交叉概率
 MutateRate=0.1;                                     %变异概率
@@ -17,7 +17,7 @@ global Kp;
 global Ki;
 global Kd;
 %% 初始化种群init.m
-Population1=rand(PopulationSize,ChromosomeLen);    %种群,预分配内存
+Population1=rand(PopulationSize,ChromosomeLen);    %种群,预分配内存   
 Population2=rand(PopulationSize,ChromosomeLen);    %种群,预分配内存
 Population3=rand(PopulationSize,ChromosomeLen);    %种群,预分配内存
 for i=1:PopulationSize
@@ -98,19 +98,19 @@ for Iter=1:MaxIter
         PopulationNew2(i,:)=mutation(ChromosomeLen,MutateRate,PopulationNew2(i,:));
         PopulationNew3(i,:)=mutation(ChromosomeLen,MutateRate,PopulationNew3(i,:));
     end
-    parfor i=1:PopulationSize
+    for i=1:PopulationSize
         Population1(i,:)=PopulationNew1(i,:);
         Population2(i,:)=PopulationNew2(i,:);
         Population3(i,:)=PopulationNew3(i,:);
     end
     
-    K_p(1,Iter)=Elite1(Iter,1);
-    K_i(1,Iter)=Elite2(Iter,1);
-    K_d(1,Iter)=Elite3(Iter,1);
+    K_p(Iter,1)=Elite1(Iter,1);
+    K_i(Iter,1)=Elite2(Iter,1);
+    K_d(Iter,1)=Elite3(Iter,1);
 end
 figure(1)
 plot(BestFitness,'LineWidth',2);
-title('最有个体适应值','fontsize',18);
+title('最优个体适应值','fontsize',18);
 xlabel('迭代次数');ylabel('适应值');
 figure(2)
 plot(K_p)
@@ -118,3 +118,9 @@ hold on
 plot(K_i,'k','LineWidth',3)
 plot(K_d,'--r')
 title('pid参数优化曲线','fontsize',18);
+
+
+
+
+
+
